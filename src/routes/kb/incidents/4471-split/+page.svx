@@ -4,7 +4,7 @@ title: '#4471 · three problems, not one'
 owner: Robert Trypuc
 status: open
 reviewed: 2026-10-29
-signature: Robert Trypuc (JabluszkoPL), with Claude Opus 5.5
+signature: v1.eyJzdWIiOiIzMjU3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMzMDY3ODgsImV4cCI6MTc5MzM5MzE4OH0.mPeRMnipcubVTs6pYkQrKYEquf_eiwgK7dlWN-ruVfs
 ---
 
 <script>
