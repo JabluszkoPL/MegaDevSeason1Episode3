@@ -1,0 +1,61 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Robert Trypuc
+status: open
+reviewed: 2026-10-29
+signature: Robert Trypuc (JabluszkoPL), with Claude Opus 5.5
+---
+
+<script>
+  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const REPO = 'https://github.com/JabluszkoPL/MegaDevSeason1Episode3/issues';
+  const tickets = { parser: `${REPO}/ISSUE_PARSER`, hint: `${REPO}/ISSUE_HINT`, shift: `${REPO}/ISSUE_SHIFT` };
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Its reports describe three
+problems. The queued parser fix closes one of them. Each problem now has its own ticket.
+
+<Callout kind="warn">
+Not one issue. The parser fix leaves the booking-v3 form hint and the one-day moves open.
+</Callout>
+
+## What #4471 holds
+
+<SplitTable ticket={4471} {tickets} />
+
+The cause comes from the tenant (its locale and booking form, `#lib/kb/locales`), not from the
+intake tag: intake guesses from the reporter's browser and is wrong in both directions. The
+`shift` rows are the reports the desk itself read as a one-day move (`desk-notes.json`).
+
+## The three problems
+
+- **`parser`**: the shared parser reads every date month first. Every tenant on file writes
+  the day first, so any date with a day of 12 or less comes out flipped: 7 April becomes 4 July.
+  This is the fix #4471 already has queued.
+- **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. People at a day-first
+  tenant type what the hint says, and the form reads it the tenant's way. The date flips again,
+  through a different path. The parser fix does not touch it; the hint has to match the tenant's
+  locale.
+- **`shift`**: a date that moved by one day, not a flipped one. The same meeting shows as Tuesday in
+  Lisbon and Monday in Toronto; an invite arrives before its booking. This points at time zones,
+  not at day and month order.
+
+## Why they were merged
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on the subject line alone. "Wrong day on the invite" came in for
+all three problems, so all three landed in #4471. The
+[triage page](/kb/triage/dedupe) already runs the cause check; it was not used for this ticket.
+
+## The table on #4471
+
+For comparison, this is what the #4471 page shows today: two causes, with the one-day moves counted
+under `parser` and footnoted.
+
+<CauseTable ticket={4471} />
+
+<RenderStamp {signature} />

@@ -17,8 +17,8 @@ export type Report = {
 
 export type Tenant = { handle: string; name: string; locale: string; form: 'booking-v2' | 'booking-v3' };
 
-export type Cause = 'parser' | 'hint';
-export const CAUSES: readonly Cause[] = ['parser', 'hint'];
+export type Cause = 'parser' | 'hint' | 'shift';
+export const CAUSES: readonly Cause[] = ['parser', 'hint', 'shift'];
 
 // What each booking form prints under its date field.
 const DATE_HINT: Record<Tenant['form'], string> = {
@@ -42,6 +42,13 @@ export function causeOf(r: Pick<Report, 'channel'>, t: Tenant | undefined): Caus
   return r.channel === 'form' && DATE_HINT[t.form].startsWith('MM') ? 'hint' : 'parser';
 }
 
+// A date that moved by one day is not a flipped one: that is `shift`. Only a person reading the
+// body can tell, so it comes from the desk's reads (desk-notes.json, oneDayMove) and wins over the
+// tenant. With no reads passed, every report keeps its tenant's cause.
+export function causeOfReport(r: Pick<Report, 'id' | 'channel'>, t: Tenant | undefined, shifted: readonly string[] = []): Cause | null {
+  return shifted.includes(r.id) ? 'shift' : causeOf(r, t);
+}
+
 export function sameCause(a: Pick<Report, 'channel'>, ta: Tenant | undefined, b: Pick<Report, 'channel'>, tb: Tenant | undefined): boolean {
   const ca = causeOf(a, ta);
   return ca !== null && ca === causeOf(b, tb);
@@ -63,10 +70,14 @@ export type CauseGroup = {
   mergedInto: number[];
 };
 
-export function groupByCause(reports: Report[], tenantOf: (r: Report) => Tenant | undefined): CauseGroup[] {
+export function groupByCause(
+  reports: Report[],
+  tenantOf: (r: Report) => Tenant | undefined,
+  shifted: readonly string[] = [],
+): CauseGroup[] {
   const byCause = new Map<CauseGroup['cause'], Report[]>();
   for (const r of reports) {
-    const cause = causeOf(r, tenantOf(r)) ?? 'unplaced';
+    const cause = causeOfReport(r, tenantOf(r), shifted) ?? 'unplaced';
     byCause.set(cause, [...(byCause.get(cause) ?? []), r]);
   }
   return [...byCause.entries()]
