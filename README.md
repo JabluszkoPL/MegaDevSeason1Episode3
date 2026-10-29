@@ -41,5 +41,5 @@ Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
 
 - Page source: `src/routes/kb/incidents/4471-split/+page.svx` (table from `src/lib/kb/SplitTable.svelte`)
 - The page as the desk sees it: `rendered/kb/incidents/4471-split.html` (whole site in `rendered/`, screenshot `rendered/4471-split.png`)
-- Tickets: #1 `parser` (374 reports), #2 `hint` (33), #3 `shift` (5)
+- Tickets: #1 `parser` (379 reports, closed: fixed), #2 `hint` (33, closed: won't fix), #3 `shift` (5, open; also counted under `parser`)
 - Build: `npm install && npm run build` (SvelteKit 3 + mdsvex), output in `build/`

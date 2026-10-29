@@ -14,14 +14,20 @@ signature: Robert Trypuc (JabluszkoPL), with Claude Opus 5.5
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 
   const REPO = 'https://github.com/JabluszkoPL/MegaDevSeason1Episode3/issues';
-  const tickets = { parser: `${REPO}/1`, hint: `${REPO}/2`, shift: `${REPO}/3` };
+  const tickets = {
+    parser: { url: `${REPO}/1`, state: 'closed · fixed' },
+    hint: { url: `${REPO}/2`, state: "closed · won't fix" },
+    shift: { url: `${REPO}/3`, state: 'open' },
+  };
 </script>
 
-[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Its reports describe three
-problems. The queued parser fix closes one of them. Each problem now has its own ticket.
+[#4471](/kb/incidents/4471) was marked known: one issue, one fix queued. Its reports describe three
+problems, and each now has its own ticket. Engineering closed #4471 on 5 October: the parser is
+fixed ("fix(dates): parse dd/mm for eu locales") and the booking-v3 form is retired, so its hint
+won't be fixed.
 
 <Callout kind="warn">
-Not one issue. The parser fix leaves the booking-v3 form hint and the one-day moves open.
+#4471 is closed, but the one-day moves are not fixed. Neither change touches them; their ticket stays open.
 </Callout>
 
 ## What #4471 holds
@@ -29,21 +35,21 @@ Not one issue. The parser fix leaves the booking-v3 form hint and the one-day mo
 <SplitTable ticket={4471} {tickets} />
 
 The cause comes from the tenant (its locale and booking form, `#lib/kb/locales`), not from the
-intake tag: intake guesses from the reporter's browser and is wrong in both directions. The
-`shift` rows are the reports the desk itself read as a one-day move (`desk-notes.json`).
+intake tag: intake guesses from the reporter's browser and is wrong in both directions. Counts
+follow the desk's view of the export, by tenant. The `shift` row is the reports the desk itself
+read as a one-day move (`desk-notes.json`); they stay counted where they're filed.
 
 ## The three problems
 
 - **`parser`**: the shared parser reads every date month first. Every tenant on file writes
   the day first, so any date with a day of 12 or less comes out flipped: 7 April becomes 4 July.
-  This is the fix #4471 already has queued.
+  Fixed on 5 October.
 - **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. People at a day-first
   tenant type what the hint says, and the form reads it the tenant's way. The date flips again,
-  through a different path. The parser fix does not touch it; the hint has to match the tenant's
-  locale.
+  through a different path. The parser fix does not touch it. Won't fix: the form is retired.
 - **`shift`**: a date that moved by one day, not a flipped one. The same meeting shows as Tuesday in
   Lisbon and Monday in Toronto; an invite arrives before its booking. This points at time zones,
-  not at day and month order.
+  not at day and month order. Still open.
 
 ## Why they were merged
 
@@ -53,7 +59,7 @@ all three problems, so all three landed in #4471. The
 
 ## The table on #4471
 
-For comparison, this is what the #4471 page shows today: two causes, with the one-day moves counted
+For comparison, this is what the #4471 page shows: two causes, with the one-day moves counted
 under `parser` and footnoted.
 
 <CauseTable ticket={4471} />
