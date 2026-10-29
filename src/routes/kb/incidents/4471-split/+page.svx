@@ -14,7 +14,7 @@ signature: Robert Trypuc (JabluszkoPL), with Claude Opus 5.5
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 
   const REPO = 'https://github.com/JabluszkoPL/MegaDevSeason1Episode3/issues';
-  const tickets = { parser: `${REPO}/ISSUE_PARSER`, hint: `${REPO}/ISSUE_HINT`, shift: `${REPO}/ISSUE_SHIFT` };
+  const tickets = { parser: `${REPO}/1`, hint: `${REPO}/2`, shift: `${REPO}/3` };
 </script>
 
 [#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Its reports describe three
